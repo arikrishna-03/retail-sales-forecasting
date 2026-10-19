@@ -1,0 +1,27 @@
+YuvaIntern Virtual Data Science Explorer Internship - Week 2 Project Submission
+Project: Retail Sales Forecasting and Inventory Planning Using Python
+Repository: https://github.com/arikrishna-03/retail-sales-forecasting
+
+Submission Description:
+--------------------------------------------------------------------------------
+Following the successful submission and approval of the Week 1 project charter, Week 2 execution focused on the end-to-end data ingestion, data quality audit, cleaning, feature engineering, and exploratory data analysis (EDA) for historical weekly retail sales across 45 stores spanning February 2010 through October 2012 (6,435 balanced observations).
+
+1. Data Integrity and Audit:
+An initial structural audit validated 100% data completeness with exactly 0 missing values across all columns and 0 duplicate records. All 45 store outlets contain an identical panel of 143 contiguous weekly observations without temporal gaps. In accordance with open-source data governance and Kaggle competition licensing rules, raw data files are safely excluded from Git version control via .gitignore, while an automated downloader script (src/download_data.py) guarantees complete end-to-end reproducibility.
+
+2. Cleaning and Feature Engineering:
+In src/data_cleaning.py, dates were explicitly parsed to datetime64[ns] from DD-MM-YYYY strings and chronologically sequenced by store to eliminate target leakage. Calendar features were extracted (Year, Month, WeekOfYear, Day, Quarter), alongside a specialized indicator (Is_PreChristmas) capturing Week 51 footfall surges which precede official calendar holiday markers.
+
+3. Outlier Diagnostics and Domain Decisions:
+Application of Tukey's 1.5*IQR threshold flagged 34 observations (0.53% of data) as mathematical outliers. An empirical timestamp audit proved that 100% of these records coincide with Thanksgiving (Black Friday) and Christmas shopping weeks (e.g., Store 14 peak sales of $3.82M on Dec 24, 2010). In retail supply chains, deleting peak demand spikes causes severe model under-prediction and costly stockouts; therefore, all outlier records were preserved and modeled via holiday features.
+
+4. Exploratory Data Analysis and Key Findings:
+Through src/eda.py, five publication-grade visualizations (300 DPI) were generated in reports/figures/:
+- Holiday Demand Uplift: Non-holiday weekly sales average $1,041,256.38, whereas holiday sales average $1,122,887.89 (+7.84% uplift). Statistical significance was formally proven via Welch's two-sample t-test (t = 2.6801, p = 0.00760) and the Mann-Whitney U test (U = 1,431,297, p = 0.02589).
+- Store Heterogeneity: Severe operational disparity exists between top-tier outlets (Store 20: $301.40M total revenue) and bottom-tier outlets (Store 33: $37.16M total revenue), an 8.11-fold difference.
+- Environmental Correlations: External variables (CPI, Unemployment, Temperature, Fuel Price) exhibit weak linear correlation with sales (|r| < 0.15), proving that calendar seasonality and store identity are the dominant drivers of demand.
+
+5. Inventory Planning Impact:
+These empirical findings directly guide Weeks 3-5 modeling: safety stock buffers (SS = Z * sigma_L) must dynamically scale during holiday spikes, while reorder points (ROP = d_L + SS) must be parameterized by store revenue tier rather than a naive global average.
+
+All code, notebooks (notebooks/01_data_inspection.ipynb, notebooks/02_exploratory_data_analysis.ipynb), and documentation are validated, reproducible, and ready for evaluation.
